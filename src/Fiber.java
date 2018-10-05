@@ -1,6 +1,6 @@
 
 public class Fiber {
 	
-	private int fiber;
+	private double fiber;
 
 }

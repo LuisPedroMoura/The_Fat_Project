@@ -1,10 +1,10 @@
 
 public class Carbs {
 	
-	private int carbs;
-	private int saccharides;
-	private int oligosaccharides;
-	private int starch;
+	private double carbs;
+	private double saccharides;
+	private double oligosaccharides;
+	private double starch;
 	
 	
 	

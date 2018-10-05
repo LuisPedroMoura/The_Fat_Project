@@ -1,30 +1,30 @@
 
 public class MicroNutrients {
 	
-	private int salt;
-	private int organicAcids;
-	private int cholesterol;
-	private int vitamin_A;
-	private int carotene;
-	private int vitamin_D;
-	private int tocopherol;
-	private int thiamine;
-	private int riboflavin;
-	private int niacin;
-	private int niacinEquivalents;
-	private int tryptophan;
-	private int vitamin_B6;
-	private int vitamin_B12;
-	private int vitamin_C;
-	private int folates;
-	private int ash;
-	private int sodium;
-	private int potassium;
-	private int calcium;
-	private int phosphor;
-	private int magnesium;
-	private int iron;
-	private int zinc;
+	private double salt;
+	private double organicAcids;
+	private double cholesterol;
+	private double vitamin_A;
+	private double carotene;
+	private double vitamin_D;
+	private double tocopherol;
+	private double thiamine;
+	private double riboflavin;
+	private double niacin;
+	private double niacinEquivalents;
+	private double tryptophan;
+	private double vitamin_B6;
+	private double vitamin_B12;
+	private double vitamin_C;
+	private double folates;
+	private double ash;
+	private double sodium;
+	private double potassium;
+	private double calcium;
+	private double phosphor;
+	private double magnesium;
+	private double iron;
+	private double zinc;
 	
 
 }

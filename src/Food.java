@@ -1,13 +1,13 @@
 
 public class Food {
 	
-	private static int globalID;
-	private int ID;
+	private static double globalID;
+	private double ID;
 	private String group;
 	private String name;
-	private int weight;
-	private int calories;
-	private Fats fat;
+	private double weight;
+	private double calories;
+	private Fats fats;
 	private Carbs carbs;
 	private Fiber fiber;
 	private Proteins proteins;
@@ -17,11 +17,11 @@ public class Food {
 		this.ID = globalID++;
 	}
 
-	public int getID() {
+	public double getID() {
 		return ID;
 	}
 
-	public void setID(int iD) {
+	public void setID(double iD) {
 		ID = iD;
 	}
 
@@ -41,28 +41,28 @@ public class Food {
 		this.name = name;
 	}
 
-	public int getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
-	public int getCalories() {
+	public double getCalories() {
 		return calories;
 	}
 
-	public void setCalories(int calories) {
+	public void setCalories(double calories) {
 		this.calories = calories;
 	}
 
 	public Fats getFat() {
-		return fat;
+		return fats;
 	}
 
 	public void setFat(Fats fat) {
-		this.fat = fat;
+		this.fats = fat;
 	}
 
 	public Carbs getCarbs() {

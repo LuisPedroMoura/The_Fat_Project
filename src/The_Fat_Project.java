@@ -24,10 +24,15 @@ public class The_Fat_Project {
 			Food food = new Food();
 			food.setName(info[0]);
 			food.setGroup(info[1]);
-			food.setCalories(info[2]);
+			food.setCalories(Double.parseDouble(info[2]));
 			Fats fats = new Fats();
-			food.
-			
+			fats.setFats(Double.parseDouble(info[3]));
+			fats.set(Double.parseDouble(info[4]));
+			fats.set(Double.parseDouble(info[5]));
+			fats.set(Double.parseDouble(info[6]));
+			fats.set(Double.parseDouble(info[7]));
+			fats.set(Double.parseDouble(info[8]));
+			food.setFat(fats);
 			tables.getFoodTable().add(info[0]);
 			
 		}
