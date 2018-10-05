@@ -33,6 +33,46 @@ public class The_Fat_Project {
 			fats.set(Double.parseDouble(info[7]));
 			fats.set(Double.parseDouble(info[8]));
 			food.setFat(fats);
+			Carbs carbs = new Carbs();
+			carbs.setCarbs(Double.parseDouble(info[9]));
+			carbs.setCarbs(Double.parseDouble(info[10]));
+			carbs.setCarbs(Double.parseDouble(info[11]));
+			carbs.setCarbs(Double.parseDouble(info[12]));
+			food.setCarbs(carbs);
+			Fiber fiber = new Fiber();
+			fiber.setFiber(Double.parseDouble(info[13]));
+			food.setFiber(fiber);
+			Protein protein = new Protein();
+			protein.setProtein(Double.parseDouble(info[14]));
+			food.setProtein(protein);
+			MicroNutrients micro = new MicroNutrients();
+			micro.setSalt(Double.parseDouble(info[15]));
+			micro.setOrganicAcids(Double.parseDouble(info[16]));
+			micro.setCholesterol(Double.parseDouble(info[17]));
+			micro.setVitamin_A(Double.parseDouble(info[18]));
+			micro.setCarotene(Double.parseDouble(info[19]));
+			micro.setVitamin_D(Double.parseDouble(info[20]));
+			micro.setTocopherol(Double.parseDouble(info[21]));
+			micro.setThiamine(Double.parseDouble(info[22]));
+			micro.setRiboflavin(Double.parseDouble(info[23]));
+			micro.setNiacin(Double.parseDouble(info[24]));
+			micro.setNiacinEquivalents(Double.parseDouble(info[25]));
+			micro.setVitamin_B6(Double.parseDouble(info[26]));
+			micro.setVitamin_B12(Double.parseDouble(info[27]));
+			micro.setVitamin_C(Double.parseDouble(info[28]));
+			micro.setFolates(Double.parseDouble(info[29]));
+			micro.setAsh(Double.parseDouble(info[30]));
+			micro.setSodium(Double.parseDouble(info[31]));
+			micro.setPotassium(Double.parseDouble(info[32]));
+			micro.setCalcium(Double.parseDouble(info[33]));
+			micro.setPhosphor(Double.parseDouble(info[34]));
+			micro.setMagnesium(Double.parseDouble(info[35]));
+			micro.setIron(Double.parseDouble(info[36]));
+			micro.setZinc(Double.parseDouble(info[37]));
+			
+			;
+			
+			
 			tables.getFoodTable().add(info[0]);
 			
 		}

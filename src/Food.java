@@ -10,7 +10,7 @@ public class Food {
 	private Fats fats;
 	private Carbs carbs;
 	private Fiber fiber;
-	private Proteins proteins;
+	private Protein protein;
 	private MicroNutrients microNutrients;
 	
 	public Food (){
@@ -81,12 +81,12 @@ public class Food {
 		this.fiber = fiber;
 	}
 
-	public Proteins getProteins() {
-		return proteins;
+	public Protein getProtein() {
+		return protein;
 	}
 
-	public void setProteins(Proteins proteins) {
-		this.proteins = proteins;
+	public void setProtein(Protein protein) {
+		this.protein = protein;
 	}
 
 	public MicroNutrients getMicroNutrients() {
