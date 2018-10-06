@@ -1,6 +1,9 @@
+import java.io.Serializable;
 
-public class MicroNutrients {
+public class MicroNutrients implements Serializable {
 	
+
+	private static final long serialVersionUID = -4196590520325408631L;
 	private double salt;
 	private double organicAcids;
 	private double cholesterol;
@@ -27,6 +30,37 @@ public class MicroNutrients {
 	private double zinc;
 	
 	
+	public MicroNutrients() {}
+	
+	public MicroNutrients(MicroNutrients micro) {
+		this.salt = micro.getSalt();
+		this.organicAcids = micro.getOrganicAcids();
+		this.cholesterol = micro.getCholesterol();
+		this.vitamin_A = micro.getVitamin_A();
+		this.carotene = micro.getCarotene();
+		this.vitamin_D = micro.getVitamin_D();
+		this.tocopherol = micro.getTocopherol();
+		this.thiamine = micro.getThiamine();
+		this.riboflavin = micro.getRiboflavin();
+		this.niacin = micro.getNiacin();
+		this.niacinEquivalents = micro.getNiacinEquivalents();
+		this.tryptophan = micro.getTryptophan();
+		this.vitamin_B6 = micro.getVitamin_B6();
+		this.vitamin_B12 = micro.getVitamin_B12();
+		this.vitamin_C = micro.getVitamin_C();
+		this.folates = micro.getFolates();
+		this.ash = micro.getAsh();
+		this.sodium = micro.getSodium();
+		this.potassium = micro.getPotassium();
+		this.calcium = micro.getCalcium();
+		this.phosphor = micro.getPhosphor();
+		this.magnesium = micro.getMagnesium();
+		this.iron = micro.getIron();
+		this.zinc = micro.getZinc();
+	}
+
+
+
 	public double getSalt() {
 		return salt;
 	}
@@ -173,6 +207,95 @@ public class MicroNutrients {
 	}
 	
 
+	public void add(MicroNutrients micro) {
+		this.salt += micro.getSalt();
+		this.organicAcids += micro.getOrganicAcids();
+		this.cholesterol += micro.getCholesterol();
+		this.vitamin_A += micro.getVitamin_A();
+		this.carotene += micro.getCarotene();
+		this.vitamin_D += micro.getVitamin_D();
+		this.tocopherol += micro.getTocopherol();
+		this.thiamine += micro.getThiamine();
+		this.riboflavin += micro.getRiboflavin();
+		this.niacin += micro.getNiacin();
+		this.niacinEquivalents += micro.getNiacinEquivalents();
+		this.tryptophan += micro.getTryptophan();
+		this.vitamin_B6 += micro.getVitamin_B6();
+		this.vitamin_B12 += micro.getVitamin_B12();
+		this.vitamin_C += micro.getVitamin_C();
+		this.folates += micro.getFolates();
+		this.ash += micro.getAsh();
+		this.sodium += micro.getSodium();
+		this.potassium += micro.getPotassium();
+		this.calcium += micro.getCalcium();
+		this.phosphor += micro.getPhosphor();
+		this.magnesium += micro.getMagnesium();
+		this.iron += micro.getIron();
+		this.zinc += micro.getZinc();
+	}
 	
+	public void remove(MicroNutrients micro) {
+		this.salt -= micro.getSalt();
+		this.organicAcids -= micro.getOrganicAcids();
+		this.cholesterol -= micro.getCholesterol();
+		this.vitamin_A -= micro.getVitamin_A();
+		this.carotene -= micro.getCarotene();
+		this.vitamin_D -= micro.getVitamin_D();
+		this.tocopherol -= micro.getTocopherol();
+		this.thiamine -= micro.getThiamine();
+		this.riboflavin -= micro.getRiboflavin();
+		this.niacin -= micro.getNiacin();
+		this.niacinEquivalents -= micro.getNiacinEquivalents();
+		this.tryptophan -= micro.getTryptophan();
+		this.vitamin_B6 -= micro.getVitamin_B6();
+		this.vitamin_B12 -= micro.getVitamin_B12();
+		this.vitamin_C -= micro.getVitamin_C();
+		this.folates -= micro.getFolates();
+		this.ash -= micro.getAsh();
+		this.sodium -= micro.getSodium();
+		this.potassium -= micro.getPotassium();
+		this.calcium -= micro.getCalcium();
+		this.phosphor -= micro.getPhosphor();
+		this.magnesium -= micro.getMagnesium();
+		this.iron -= micro.getIron();
+		this.zinc -= micro.getZinc();
+	}
+	
+	
+	public String print() {
+		return toString();
+	}
+	public String stats() {
+		return toString();
+	}
+	@Override
+	public String toString() {
+		String str = "Micro Nutrients: " + "\n";
+		str += ("\t" + salt + " Salt" + "\n");
+		str += ("\t" + organicAcids + " OrganicAcids" + "\n");
+		str += ("\t" + cholesterol + " Cholesterol" + "\n");
+		str += ("\t" + vitamin_A + " Vitamin_A" + "\n");
+		str += ("\t" + carotene + " Carotene" + "\n");
+		str += ("\t" + vitamin_D + " Vitamin_D" + "\n");
+		str += ("\t" + tocopherol + " Tocopherol" + "\n");
+		str += ("\t" + tocopherol + " Tocopherol" + "\n");
+		str += ("\t" + riboflavin + " Riboflavin" + "\n");
+		str += ("\t" + niacin + " Niacin" + "\n");
+		str += ("\t" + niacinEquivalents + " NiacinEquivalents" + "\n");
+		str += ("\t" + tryptophan + " Tryptophan" + "\n");
+		str += ("\t" + vitamin_B6 + " Vitamin_B6" + "\n");
+		str += ("\t" + vitamin_B12 + " Vitamin_B12" + "\n");
+		str += ("\t" + vitamin_C + " Vitamin_C" + "\n");
+		str += ("\t" + folates + " Folates" + "\n");
+		str += ("\t" + ash + " Ash" + "\n");
+		str += ("\t" + sodium + " Sodium" + "\n");
+		str += ("\t" + potassium + " Potassium" + "\n");
+		str += ("\t" + calcium + " Calcium" + "\n");
+		str += ("\t" + phosphor + " Phosphor" + "\n");
+		str += ("\t" + magnesium + " Magnesium" + "\n");
+		str += ("\t" + iron + " Iron" + "\n");
+		str += ("\t" + zinc + " Zinc");
+		return str;
+	}
 	
 }

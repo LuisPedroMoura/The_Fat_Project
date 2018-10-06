@@ -1,22 +1,43 @@
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Tables {
 	
-	private Map<Integer, Food> foodTable = new HashMap<>();
-	private Map<String, List<Food>> foodsPerGroup = new HashMap<>();
+	private Map<Integer, Ingredient> ingredientTable = new HashMap<>();
+	private Map<String, List<Ingredient>> ingredientsPerGroup = new HashMap<>();
+	private Map<Date, Meal> meals = new HashMap<>();
 	
 	
-	public Map<Integer, Food> getFoodTable() {
-		return foodTable;
+	
+	@SuppressWarnings("unchecked")
+	public Tables() {
+		try {
+			FileInputStream fis = new FileInputStream("myStats.ser");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			meals = (Map<Date, Meal>) ois.readObject();
+			ois.close();
+		} catch (Exception e) {
+			System.out.println("myStats file was not found!");
+		}
+	}
+	
+	public Map<Integer, Ingredient> getIngredientTable() {
+		return ingredientTable;
 	}
 
-	public Map<String, List<Food>> getFoodsPerGroup() {
-		return foodsPerGroup;
+	public Map<String, List<Ingredient>> getIngredientsPerGroup() {
+		return ingredientsPerGroup;
 	}
 
-	
-	
+	public Map<Date, Meal> getMeals() {
+		return meals;
+	}
 
+	public void setMeals(Map<Date, Meal> meals) {
+		this.meals = meals;
+	}
+	
 }
