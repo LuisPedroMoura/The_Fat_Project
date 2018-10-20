@@ -16,7 +16,6 @@ public class Protein implements Serializable {
 	public double getProtein() {
 		return protein;
 	}
-
 	public void setProtein(double protein) {
 		this.protein = protein;
 	}

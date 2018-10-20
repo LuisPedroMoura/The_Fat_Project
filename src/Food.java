@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import static java.lang.System.*;
 
 public class Food implements Serializable{
 	
@@ -14,10 +15,13 @@ public class Food implements Serializable{
 	protected Protein protein;
 	protected MicroNutrients microNutrients;
 	
+	private static int globalID;
+	protected int ID;
+	
 	
 	
 	public Food() {
-		this.weight = 100;
+		this.ID = globalID++;
 		this.fats = new Fats();
 		this.carbs = new Carbs();
 		this.fiber = new Fiber();
@@ -82,6 +86,12 @@ public class Food implements Serializable{
 	public void setMicroNutrients(MicroNutrients microNutrients) {
 		this.microNutrients = microNutrients;
 	}
+	public int getID() {
+		return ID;
+	}
+	public void setID(int iD) {
+		ID = iD;
+	}
 	
 	
 	
@@ -127,23 +137,19 @@ public class Food implements Serializable{
 	}
 	
 	
-	public String simpleStats() {
-		String str = "";
-		str += fats.print() + "\n";
-		str += carbs.print() + "\n";
-		str += fiber.print() + "\n";
-		str += protein.print();
-		return str;
+	public void printSimpleStats() {
+		out.println(fats.print());
+		out.println(carbs.print());
+		out.println(fiber.print());
+		out.println(protein.print());
 	}
 	
-	public String fullStats() {
-		String str = "";
-		str += fats.stats() + "\n";
-		str += carbs.stats() + "\n";
-		str += fiber.stats() + "\n";
-		str += protein.stats() + "\n";
-		str += microNutrients.stats();
-		return str;
+	public void printFullStats() {
+		out.println(fats.stats());
+		out.println(carbs.stats());
+		out.println(fiber.stats());
+		out.println(protein.stats());
+		out.println(microNutrients.stats());
 	}
 	
 	

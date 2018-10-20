@@ -1,3 +1,5 @@
+import static java.lang.System.out;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class Meal extends Food{
 
 	public Meal() throws Exception {
 		super();
-		this.date = new Date(1,1,1);
+		this.calories = 0.0;
+		this.weight = 0.0;
 	}
 	
 
@@ -26,8 +29,15 @@ public class Meal extends Food{
 	}
 	
 	
+	public boolean isEmpty() {
+		return ingredients.size() == 0;
+	}
+	
+	
 	public void addIngredient(Ingredient ingredient) {
 		this.ingredients.add(ingredient);
+		this.calories += ingredient.getCalories();
+		this.weight += ingredient.getWeight();
 		this.fats.add(ingredient.getFats());
 		this.carbs.add(ingredient.getCarbs());
 		this.fiber.add(ingredient.getFiber());
@@ -37,6 +47,8 @@ public class Meal extends Food{
 	
 	public void removeIngredient(Ingredient ingredient) {
 		ingredients.remove(ingredient);
+		this.calories -= ingredient.getCalories();
+		this.weight -= ingredient.getWeight();
 		this.fats.remove(ingredient.getFats());
 		this.carbs.remove(ingredient.getCarbs());
 		this.fiber.remove(ingredient.getFiber());
@@ -45,21 +57,17 @@ public class Meal extends Food{
 	}
 	
 	
-
-	
 	@Override
 	public String toString() {
 		String str = "(" + date.toString() + ")\n";
 		for (int i = 0; i < ingredients.size(); i++) {
 			Ingredient ingredient = ingredients.get(i);
-			str += ("\t" + (i+1) + " - " + ingredient.getWeight() + "g " + ingredient.getName() + "\n");
+			str += ("\t" + (i+1) + " - " + ingredient);
+			if (i < ingredients.size()-1) {
+				str += "\n";
+			}
 		}
 		return str;
-	}
-	
-	public String stats() {
-		
-		return "";
 	}
 
 }

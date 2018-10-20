@@ -1,10 +1,14 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -22,10 +26,6 @@ public class The_Fat_Project {
 		ingredientsFile = new File(filename);
 		parseIngredientFile(ingredientsFile);
 		
-//		String filename2 = args.length == 0 ? "Ingredient.csv" : args[1];
-//		File file2 = new File(filename2);
-//		parseStatsFile(file2);
-		
 		printMenu();		
 	}
 	
@@ -33,12 +33,12 @@ public class The_Fat_Project {
 	private static void parseIngredientFile (File file) throws FileNotFoundException {
 		
 		Scanner read = new Scanner(file);
-		
+
 		read.nextLine();
 		while (read.hasNextLine()) {
 			
 			String line = read.nextLine();
-			Ingredient ingredient = parseIngredient(line);
+			Ingredient ingredient = parseIngredient(line);	
 			
 			tables.getIngredientTable().put(ingredient.getID(), ingredient);
 			
@@ -57,7 +57,6 @@ public class The_Fat_Project {
 		String[] info = line.split(",");
 		
 		Ingredient ingredient = new Ingredient();
-		ingredient.setWeight(100); // sets standard weight to 100g in file
 		ingredient.setName(info[0]);
 		ingredient.setGroup(info[1]);
 		ingredient.setCalories(Double.parseDouble(info[2]));
@@ -123,25 +122,75 @@ public class The_Fat_Project {
 			out.println("THE FAT PROJECT");
 			out.println();
 			out.println("1 - Add Meal");
-			out.println("2 - Add New Ingredient to File");
+			out.println("2 - Manage Ingredients File");
 			out.println("3 - See Statistics");
 			out.println("0 - SAVE AND EXIT");
 			out.println();
 			
 			option = rd.nextLine();
 			switch (option){
-				case "1": addMealMenu(new Meal()); break;
-				case "2": addNewIngredientToFileMenu(); break;
+				case "1": 
+					Meal meal = addMealMenu(new Meal(), false);
+					if (meal != null) {
+						tables.saveMeal(meal);
+					}
+					break;
+				case "2": manageIngredientsFile(); break;
 				case "3": seeStatsMenu(); break;
-				case "0": 
-					FileOutputStream fos = new FileOutputStream("myStats.ser");
-					ObjectOutputStream oos = new ObjectOutputStream(fos);
-					oos.writeObject(tables.getMeals());
-					oos.close();
+				case "0":
+					
+					// saving meals
+					try {
+						FileOutputStream fos = new FileOutputStream("myStats.ser");
+						ObjectOutputStream oos = new ObjectOutputStream(fos);
+						oos.writeObject(tables.getMeals());
+						oos.close();
+					} catch (Exception e) {
+						err.print("ERROR while saving meal added in this session. Please repeat.");
+						System.exit(1);
+					}
+					
+					// saving ingredients
+					// temporary copy
+					InputStream is = null;
+					OutputStream os = null;
+					File tempFile = new File("IngredientsSafetyCopy.csv");
+				    try {
+				        is = new FileInputStream(ingredientsFile);
+				        os = new FileOutputStream(tempFile);
+				        byte[] buffer = new byte[1024];
+				        int length;
+				        while ((length = is.read(buffer)) > 0) {
+				            os.write(buffer, 0, length);
+				        }
+				    } catch (Exception e) {
+				    	out.print("Error while saving - temporary copy failed");
+				    	System.exit(1);
+				    } finally {
+				        is.close();
+				        os.close();
+				    }
+					
+				    // save the ingredients to File
+					ingredientsFile.delete();
+					ingredientsFile = new File("Ingredients.csv");
+					Map<Integer, Ingredient> ingTable = tables.getIngredientTable();
+					for (Integer key : ingTable.keySet()) {
+						saveToFile(ingTable.get(key), ingredientsFile);
+					}
+					
+					// delete temporary safety copy
+					try {
+						tempFile.delete();
+						
+					} catch (Exception e) {
+						out.println("Error in deletion of temporary archive file, please verify in folder");
+					}
 					option = "0";
 				default: ;
 			}
-		} while (option != "0");
+		} while (!option.equals("0"));
+		out.println();
 	}
 	
 	
@@ -150,29 +199,50 @@ public class The_Fat_Project {
 	 * @param meal
 	 * @throws IOException 
 	 */
-	private static void addMealMenu(Meal meal) throws IOException {
+	private static Meal addMealMenu(Meal meal, boolean toFile) throws IOException {
 		
-		boolean correctDate = true;
-		do {
-			out.println();
-			out.print("day: ");
-			String day = rd.nextLine();
-			out.print("month: ");
-			String month = rd.nextLine();
-			out.print("year: ");
-			String year = rd.nextLine();
-			Date date;
-			try {
-				date = new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
-				meal.setDate(date);
-			}
-			catch (Exception e) {
-				out.println();
-				out.println("Invalid Date");
-				out.println();
-				correctDate = false;
-			}
-		} while (!correctDate);
+		if (!toFile) {
+			
+			boolean correctOption;
+			do {
+				correctOption = true;
+				out.println("Is the Meal for today? (y/n)");
+				String option = rd.nextLine();
+				if (option.equals("n")) {
+
+					boolean correctDate = true;
+					do {
+						out.println();
+						out.print("day: ");
+						String day = rd.nextLine();
+						out.print("month: ");
+						String month = rd.nextLine();
+						out.print("year: ");
+						String year = rd.nextLine();
+						Date date;
+						try {
+							date = new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
+							meal.setDate(date);
+						}
+						catch (Exception e) {
+							out.println();
+							out.println("Invalid Date");
+							out.println();
+							correctDate = false;
+						}
+					} while (!correctDate);
+				}
+				else if (option.equals("y")) {
+					meal.setDate(new Date());
+				}
+				else {
+					correctOption = false;
+				}
+			} while (!correctOption);
+		}
+		else {
+			meal.setDate(new Date());
+		}
 		
 		String option = "";
 		do {
@@ -182,34 +252,40 @@ public class The_Fat_Project {
 			out.println("3 - See Meal");
 			out.println("4 - See Meal Simple Nutritional Value");
 			out.println("5 - See Meal Detailed Nutritional Value");
-			out.println("6 - Save Meal to File as a new Ingredient");
 			out.println("0 - RETURN AND SAVE");
+			out.println("x - RETURN WITHOUT SAVING");
 			out.println();
 			
 			option = rd.nextLine();
 			switch (option){
-				case "1": ingredientGroupMenu(meal); break;
+				case "1":
+					Ingredient ingredient = ingredientGroupMenu();
+					if (ingredient != null) {
+						meal.addIngredient(ingredient);
+					}
+					break;
 				case "2": removeIngredientMenu(meal); break;
 				case "3": seeMealMenu(meal); break;
 				case "4": seeMealSimpleNutrVal(meal); break;
 				case "5": seeMealDetailedNutrVal(meal); break;
-				case "6": 
-					out.println();
-					out.println("Meal Nutritional Values will be saved in relation to 100g");
-					meal.setWeight(100);
-					saveToFile(meal); break;
-				case "0":
-					tables.getMeals().put(meal.getDate(), meal);
-					option = "0";
+				case "0": 
+					if (!meal.isEmpty()) {
+						return meal;
+					}
+					else {
+						return null;
+					}
+				case "x": return null;
 				default: ;
 			}
-		} while (option != "0");
+		} while (!option.equals("0"));
 		
+		return null;
 	}
 	
-	private static void ingredientGroupMenu(Meal meal) throws IOException {
+	private static Ingredient ingredientGroupMenu() throws IOException {
 		
-		Map<String, List<Ingredient>> groupTable = tables.getIngredientsPerGroup();
+		Map<String, List<Ingredient>> groupTable = tables.getIngredientsPerGroup();		
 		Object[] group = groupTable.keySet().toArray();
 		boolean correctOption = true;
 		int option = -1;
@@ -220,11 +296,16 @@ public class The_Fat_Project {
 			for (int i = 0; i < groupTable.size(); i++) {
 				out.print((i+1) + " - " + group[i].toString() + "\n");
 			}
+			out.println("x - CANCEL");
 			
+			String read = rd.nextLine();
 			try {
-				option = Integer.parseInt(rd.nextLine())-1;
+				option = Integer.parseInt(read)-1;
 			}
 			catch (Exception e) {
+				if (read.equals("x")) {
+					return null;
+				}
 				correctOption = false;
 			}
 			
@@ -235,47 +316,54 @@ public class The_Fat_Project {
 			
 		} while (!correctOption);
 		
-		ingredientMenu(meal, groupTable.get((String)group[option]));
+		out.println();
+		
+		return ingredientMenu(groupTable.get((String)group[option]));
 	}
 
-	private static void ingredientMenu(Meal meal, List<Ingredient> ingredients) throws IOException {
+	private static Ingredient ingredientMenu(List<Ingredient> ingredients) throws IOException {
 		
 		boolean correctOption = true;
 		Ingredient ingredient = new Ingredient();
 		do {
 			out.println();
-			out.println("CHOOSE THE FOOD TO ADD");
+			out.println("CHOOSE THE INGREDIENT TO ADD");
 			out.println();
 			
 			for (int i = 0; i < ingredients.size(); i++) {
 				Ingredient f = ingredients.get(i);
 				out.print(f.getID() + " - " + f.getName() + "\n");
 			}
+			out.println("x - CANCEL");
 			
 			String option = rd.nextLine();
 			try {
-				ingredient = tables.getIngredientTable().get(Integer.parseInt(option));
+				
+				boolean correctWeight = true;
+				double weight = 0.0;
+				do {
+					out.println();
+					out.println("Weight of ingredient in grams:");
+					try {
+						weight = Double.parseDouble(rd.nextLine());
+					}
+					catch (Exception e) {
+						correctWeight = false;
+					}
+				}while (!correctWeight);
+				
+				ingredient = new Ingredient(tables.getIngredientTable().get(Integer.parseInt(option)), weight);
 			}
 			catch (Exception e) {
+				if (option.equals("x")) {
+					return null;
+				}
 				correctOption = false;
 			}
 		} while (!correctOption);
 		
-		correctOption = true;
-		double weight = 0.0;
-		do {
-			out.println();
-			out.println("Weight of ingredient in grams:");
-			try {
-				weight = Double.parseDouble(rd.nextLine());
-			}
-			catch (Exception e) {
-				correctOption = false;
-			}
-		}while (!correctOption);
-		
-		meal.addIngredient(new Ingredient(ingredient, weight));
 		out.println();
+		return ingredient;
 		
 	}
 	
@@ -286,12 +374,18 @@ public class The_Fat_Project {
 		do {
 			out.println();
 			out.println(meal);
+			out.println("x - CANCEL");
 			out.println();
 			out.println("Which ingredient do you wish to remove?");
+			
+			String read = rd.nextLine();
 			try {
-				option = Integer.parseInt(rd.nextLine());
+				option = Integer.parseInt(read);
 			}
 			catch (Exception e) {
+				if (read.equals("x")) {
+					return;
+				}
 				correctOption = false;
 			}
 		} while (!correctOption);
@@ -311,7 +405,7 @@ public class The_Fat_Project {
 	
 	public static void seeMealSimpleNutrVal(Food meal) {
 		out.println();
-		out.println(meal.simpleStats());
+		meal.printSimpleStats();
 		out.println();
 		out.println("PRESS ANY KEY + ENTER TO RETURN");
 		rd.nextLine();
@@ -320,7 +414,7 @@ public class The_Fat_Project {
 	
 	public static void seeMealDetailedNutrVal(Food meal) {
 		out.println();
-		out.println(meal.fullStats());
+		meal.printFullStats();
 		out.println();
 		out.println("PRESS ANY KEY + ENTER TO RETURN");
 		rd.nextLine();
@@ -328,12 +422,55 @@ public class The_Fat_Project {
 	}
 	
 	
-	public static void addNewIngredientToFileMenu() throws IOException {
+	public static void manageIngredientsFile() throws Exception {
+		
+		String option = "";
+		do {
+			out.println();
+			out.println("INGREDIENTS FILE TOOL");
+			out.println();
+			out.println("1 - Add Ingredient to File");
+			out.println("2 - Remove Ingredient to File");
+			out.println("0 - RETURN");
+			out.println();
+			
+			option = rd.nextLine();
+			switch(option) {
+				case "1": addNewIngredientToFileMenu(); break;
+				case "2": removeIngredientFromFile(); break;
+			}
+		} while (!option.equals("0"));
+	}
+
+	public static void addNewIngredientToFileMenu() throws Exception {
+		
+		String option = "";
+		do {
+			out.println();
+			out.println("ADD FOOD TO FILE TOOL");
+			out.println();
+			out.println("1 - Add new simple Ingredient");
+			out.println("2 - Add Meal as an Ingredient");
+			out.println("3 - Remove Ingredient");
+			out.println("0 - RETURN");
+			out.println();
+			
+			option = rd.nextLine();
+			switch(option) {
+				case "1": addNewSimpleIngredientToFile(); break;
+				case "2": addMealAsIngredientToFile(new Meal()); break;
+				case "3": removeIngredientFromFile(); break;
+				case "0": option = "0"; break;
+			}
+		} while (!option.equals("0"));
+		out.println();
+	}
+	
+	public static void addNewSimpleIngredientToFile() {
 		
 		try {
 			out.println();
 			out.println("ADD FOOD TO FILE TOOL");
-			out.println("All given values must be for 100g of ingredient");
 			out.println();
 			
 			Ingredient ingredient = new Ingredient();
@@ -345,11 +482,19 @@ public class The_Fat_Project {
 			out.println("Select ingredient group: ");
 			Map<String, List<Ingredient>> groupTable = tables.getIngredientsPerGroup();
 			Object[] group = groupTable.keySet().toArray();
-			for (int i = 0; i < groupTable.size(); i++) {
+			int i = 0;
+			for (; i < groupTable.size(); i++) {
 				out.print((i+1) + " - " + group[i].toString() + "\n");
 			}
+			out.print((i+2) + " - " + "New Food Group" + "\n");
 			int option = Integer.parseInt(rd.nextLine());
-			ingredient.setGroup((String)group[option-1]);
+			if (option == i+2) {
+				out.println("New Group Name: ");
+				ingredient.setGroup(rd.nextLine());
+			}
+			else {
+				ingredient.setGroup((String)group[option-1]);
+			}
 			
 			out.println("Calories: ");
 			ingredient.setCalories(Double.parseDouble(rd.nextLine()));
@@ -492,19 +637,38 @@ public class The_Fat_Project {
 			}
 			ingredient.setMicroNutrients(micro);
 
-			saveToFile(ingredient);
+			tables.getIngredientTable().put(ingredient.getID(), ingredient);
 			out.println();
-			
 		}
 		catch (Exception e) {
-			out.print("An invalid value was given. Returning to Main Menu");
+			out.print("ERROR while creating New Ingredient!");
 		}
-		
 	}
 	
-	public static void saveToFile(Food ingredient) throws IOException {
+	public static void addMealAsIngredientToFile(Meal meal) throws IOException {
 		
-	    FileWriter wr = new FileWriter(ingredientsFile,true);
+		out.println();
+		out.println("ADD FOOD TO FILE TOOL");
+		out.println();
+		meal = addMealMenu(meal, true);
+		Ingredient ingredient = new Ingredient(meal);
+		if (meal != null) {
+			tables.getIngredientTable().put(ingredient.getID(), ingredient);
+		}
+	}
+	
+	public static void removeIngredientFromFile() throws IOException {
+		
+		out.println();
+		out.println("REMOVE FOOD TO FILE TOOL");
+		out.println();
+		Ingredient ingredient = ingredientGroupMenu();
+		tables.getIngredientTable().remove(ingredient.getID());
+	}
+	
+	public static void saveToFile(Food ingredient, File file) throws IOException {
+		
+	    FileWriter wr = new FileWriter(file,true);
 		wr.write(ingredient.getName() + ",");
 		wr.write(ingredient.getGroup() + ",");
 		wr.write(ingredient.getCalories() + ",");
@@ -546,16 +710,163 @@ public class The_Fat_Project {
 		wr.write(ingredient.getMicroNutrients().getZinc() + "");
 		wr.write("\n");
 		wr.close();
-		
-		parseIngredientFile(ingredientsFile);
-		
 	}
 	
 	
 	public static void seeStatsMenu() throws Exception {
-		for (Date date : tables.getMeals().keySet()) {
-			out.println(tables.getMeals().get(date));
+		
+
+		String option = "";
+		do {
+			out.println();
+			out.println("1 - Global Stats");
+			out.println("2 - Last 30 days");
+			out.println("3 - Last 7 days");
+			out.println("4 - Yesterday");
+			out.println("5 - Today");
+			out.println("6 - Personalized");
+			out.println("0 - RETURN");
+			out.println();
+			
+			option = rd.nextLine();
+			switch (option){
+				case "1": printGlobalStats(); break;
+				case "2": printLastDaysStats(30); break;
+				case "3": printLastDaysStats(7); break;
+				case "4": 
+					Date date = new Date();
+					printStats(date.yesterday(), date.yesterday());
+					break;
+				case "5": 
+					Date today = new Date();
+					printStats(today, today);
+					break;
+				case "6":
+					boolean correctDate = true;
+					Date first = null;
+					Date last = null;
+					do {
+						try {
+							out.println("First date:");
+							out.println();
+							out.print("day: ");
+							String day = rd.nextLine();
+							out.print("month: ");
+							String month = rd.nextLine();
+							out.print("year: ");
+							String year = rd.nextLine();
+							first = new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
+							out.println("Last date:");
+							out.println();
+							out.print("day: ");
+							day = rd.nextLine();
+							out.print("month: ");
+							month = rd.nextLine();
+							out.print("year: ");
+							year = rd.nextLine();
+							last = new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
+						}
+						catch (Exception e) {
+							out.println();
+							out.println("Invalid Date");
+							out.println();
+							correctDate = false;
+						}
+					} while (!correctDate);
+					printStats(first, last);
+					break;
+				case "0": option = "0";
+				default: ;
+			}
+		} while (!option.equals("0"));
+		out.println();
+	}
+	
+	
+	public static void printGlobalStats() {
+		
+//		for (Date date: tables.getMeals().keySet()) {
+//			List<Meal> list = tables.getMeals().get(date);
+//			for (Meal meal : list) {
+//				out.println(meal);
+//			}
+//		}
+		
+		Comparator<Date> dateComp = new Comparator<Date>() {
+			@Override
+			public int compare(Date d1, Date d2) {
+				return d1.compareTo(d2);
+			}
+		};
+		
+		try {
+			Date first = tables.getMeals().keySet().stream()
+									  			   .min(dateComp)
+									  			   .get();
+			
+			Date last = tables.getMeals().keySet().stream()
+		  			   							   .max(dateComp)
+		  			   							   .get();
+			printStats(first, last);
+		} catch (Exception e) {
+			out.println("There are no meals saved yet!");
 		}
+		
+		out.println();
+	}
+	
+	public static void printLastDaysStats(int days) {
+		
+		Comparator<Date> dateComp = new Comparator<Date>() {
+			@Override
+			public int compare(Date d1, Date d2) {
+				return d1.compareTo(d2);
+			}
+		};
+		
+		Date last = tables.getMeals().keySet().stream()
+					   .max(dateComp)
+					   .get();
+		
+		Date first = last.subtractDays(days);
+		
+		printStats(first, last);
+		out.println();
+	}
+	
+	public static void printStats(Date first, Date last) {
+		
+		Stats stats = new Stats(first, last);
+		Map<Date,List<Meal>> meals = tables.getMeals();
+		
+		for (Date date : meals.keySet()) {
+			if (date.compareTo(first) >= 0 && date.compareTo(last) <= 0) {
+				List<Meal> list = new ArrayList<>();
+				for (Meal meal : meals.get(date)) {
+					list.add(meal);
+				}
+				stats.addDay(date, list);
+			}
+		}
+		
+		String option = "";
+		do {
+			out.println();
+			out.println("PRINT STATISTICS");
+			out.println();
+			out.println("1 - Simple Macro Nutrient Statistics");
+			out.println("2 - All Nutrient Statistics");
+			out.println("0 - RETURN");
+			out.println();
+			
+			option = rd.nextLine();
+			switch(option) {
+				case "1": stats.printSimpleStats(); break;
+				case "2": stats.printFullStats(); break;
+				case "0": option = "0"; break;
+			}
+		} while (!option.equals("0"));
+		out.println();
 	}
 
 }
