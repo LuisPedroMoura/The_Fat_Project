@@ -14,7 +14,6 @@ public class Stats extends Food{
 	private int totalDays = 0;
 	
 	private double totalMacroWeight;
-	private double totalWeight;
 	private double fatsCal;
 	private double proteinCal;
 	private double carbsCal;
@@ -43,12 +42,6 @@ public class Stats extends Food{
 	}
 	public void setLastDay(Date lastDay) {
 		this.lastDay = lastDay;
-	}
-	public double getTotalWeight() {
-		return totalWeight;
-	}
-	public void setTotalWeight(double totalWeight) {
-		this.totalWeight = totalWeight;
 	}
 	public double getTotalMacroWeight() {
 		return totalMacroWeight;
@@ -80,6 +73,10 @@ public class Stats extends Food{
 	public void setFiberCal(double fiberCal) {
 		this.fiberCal = fiberCal;
 	}
+	@Override
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
 
 
 	public void addDay(Date date, List<Meal> list) {
@@ -87,7 +84,7 @@ public class Stats extends Food{
 		days.put(date, list);
 		for (Meal meal : list) {
 			this.calories += meal.getCalories();
-			this.totalWeight += meal.getWeight();
+			this.weight += meal.getWeight();
 			this.getFats().add(meal.getFats());
 			this.getCarbs().add(meal.getCarbs());
 			this.getFiber().add(meal.getFiber());
@@ -158,25 +155,37 @@ public class Stats extends Food{
 		out.printf("---------------------------------------------------------------------------------\n");
 		out.printf("|                 MACRO AND MICRO NUTRIENTS STATISTICS - GLOBAL                 |\n");
 		out.printf("|-------------------------------------------------------------------------------|\n");
-		out.printf("| Total weight: %31.0f g %10.0f cal                |\n", totalWeight, calories);
+		out.printf("| Total weight: %31.0f g %10.0f cal                |\n", this.weight, calories);
 		out.printf("| Total fats: %33.0f g %10.0f cal                |\n", fats.getFats(), fatsCal);
 		out.printf("| Total protein: %30.0f g %10.0f cal                |\n", protein.getProtein(), proteinCal);
 		out.printf("| Total carbs: %32.0f g %10.0f cal                |\n", carbs.getCarbs(), carbsCal);
 		out.printf("| Total fiber: %32.0f g %10.0f cal                |\n", fiber.getFiber(), fiberCal);
 		out.printf("|-------------------------------------------------------------------------------|\n");
-		out.printf("| Average weight: %29.0f g %10.0f cal                |\n", avStats.getTotalWeight(), avStats.getCalories());
+		out.printf("| Total Days: %30d days                               |\n", this.totalDays);
+		out.printf("|                                                                               |\n");
+		out.printf("| Average weight: %29.0f g %10.0f cal                |\n", avStats.getWeight(), avStats.getCalories());
+		out.printf("| Macro to Calories Ratios:                                                     |\n");
+		out.printf("| Fats:                              %10.2f %%                               |\n", avStats.getFatsCal()/avStats.getCalories()*100);
+		out.printf("| Protein:                           %10.2f %%                               |\n", avStats.getProteinCal()/avStats.getCalories()*100);
+		out.printf("| Carbs:                             %10.2f %%                               |\n", avStats.getCarbsCal()/avStats.getCalories()*100);
+		out.printf("| Fiber:                             %10.2f %%                               |\n", avStats.getFiberCal()/avStats.getCalories()*100);
+		out.printf("|                                                                               |\n");
 		out.printf("| Average fats weight: %24.0f g %10.0f cal                |\n", avStats.getFats().getFats(), avStats.getFatsCal());
 		out.printf("| 		Saturated: %20.1f g                               |\n", avStats.getFats().getSaturated());
 		out.printf("| 		Monounsaturated: %14.1f g                               |\n", avStats.getFats().getMonounsaturated());
 		out.printf("| 		Polyunsaturated: %14.1f g                               |\n", avStats.getFats().getPolyunsaturated());
 		out.printf("| 		Linoleic: %21.1f g                               |\n", avStats.getFats().getLinoleic());
 		out.printf("| 		Trans: %24.1f g                               |\n", avStats.getFats().getTrans());
+		out.printf("|                                                                               |\n");
 		out.printf("| Average protein weight: %21.0f g %10.0f cal                |\n", avStats.getProtein().getProtein(), avStats.getProteinCal());
+		out.printf("|                                                                               |\n");
 		out.printf("| Average carbs weight: %23.0f g %10.0f cal                |\n", avStats.getCarbs().getCarbs(), avStats.getCarbsCal());
 		out.printf("| 		Saccharides: %18.1f g                               |\n", avStats.getCarbs().getSaccharides());
 		out.printf("| 		Oligosaccharides: %13.1f g                               |\n", avStats.getCarbs().getOligosaccharides());
 		out.printf("| 		Starch: %23.1f g                               |\n", avStats.getCarbs().getStarch());
+		out.printf("|                                                                               |\n");
 		out.printf("| Average fiber weight: %23.0f g %10.0f cal                |\n", avStats.getFiber().getFiber(), avStats.getFiberCal());
+		out.printf("|                                                                               |\n");
 		out.printf("| Average minerals and vitamins:                                                |\n");
 		out.printf("| 		Salt: %25.9f g                               |\n", avStats.getMicroNutrients().getSalt());
 		out.printf("| 		Organic Acids: %16.9f g                               |\n", avStats.getMicroNutrients().getOrganicAcids());
@@ -217,8 +226,8 @@ public class Stats extends Food{
 		this.avStats.setFiberCal(this.fiberCal / totalDays);
 
 		
-		this.avStats.setCalories(this.getCalories() / totalDays);
-		this.avStats.setWeight(this.getTotalWeight() / totalDays);
+		this.avStats.setCalories(this.calories / totalDays);
+		this.avStats.setWeight(this.weight / totalDays);
 		this.avStats.getFats().setFats(this.fats.getFats() / totalDays);
 		this.avStats.getFats().setSaturated(this.fats.getSaturated() / totalDays);
 		this.avStats.getFats().setMonounsaturated(this.fats.getMonounsaturated() / totalDays);

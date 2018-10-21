@@ -4,7 +4,7 @@ public class Protein implements Serializable {
 	
 
 	private static final long serialVersionUID = -5508376135972414972L;
-	private double protein;
+	private double protein = 0.0;
 	
 	public Protein() {}
 	

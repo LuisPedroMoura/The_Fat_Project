@@ -4,30 +4,30 @@ public class MicroNutrients implements Serializable {
 	
 
 	private static final long serialVersionUID = -4196590520325408631L;
-	private double salt;
-	private double organicAcids;
-	private double cholesterol;
-	private double vitamin_A;
-	private double carotene;
-	private double vitamin_D;
-	private double tocopherol;
-	private double thiamine;
-	private double riboflavin;
-	private double niacin;
-	private double niacinEquivalents;
-	private double tryptophan;
-	private double vitamin_B6;
-	private double vitamin_B12;
-	private double vitamin_C;
-	private double folates;
-	private double ash;
-	private double sodium;
-	private double potassium;
-	private double calcium;
-	private double phosphor;
-	private double magnesium;
-	private double iron;
-	private double zinc;
+	private double salt = 0.0;
+	private double organicAcids = 0.0;
+	private double cholesterol = 0.0;
+	private double vitamin_A = 0.0;
+	private double carotene = 0.0;
+	private double vitamin_D = 0.0;
+	private double tocopherol = 0.0;
+	private double thiamine = 0.0;
+	private double riboflavin = 0.0;
+	private double niacin = 0.0;
+	private double niacinEquivalents = 0.0;
+	private double tryptophan = 0.0;
+	private double vitamin_B6 = 0.0;
+	private double vitamin_B12 = 0.0;
+	private double vitamin_C = 0.0;
+	private double folates = 0.0;
+	private double ash = 0.0;
+	private double sodium = 0.0;
+	private double potassium = 0.0;
+	private double calcium = 0.0;
+	private double phosphor = 0.0;
+	private double magnesium = 0.0;
+	private double iron = 0.0;
+	private double zinc = 0.0;
 	
 	
 	public MicroNutrients() {}

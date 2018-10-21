@@ -4,10 +4,10 @@ public class Carbs implements Serializable {
 	
 
 	private static final long serialVersionUID = 5630731610973258371L;
-	private double carbs;
-	private double saccharides;
-	private double oligosaccharides;
-	private double starch;
+	private double carbs = 0.0;
+	private double saccharides = 0.0;
+	private double oligosaccharides = 0.0;
+	private double starch = 0.0;
 	
 	
 	public Carbs() {}

@@ -123,7 +123,8 @@ public class The_Fat_Project {
 			out.println();
 			out.println("1 - Add Meal");
 			out.println("2 - Manage Ingredients File");
-			out.println("3 - See Statistics");
+			out.println("3 - Manage previous Meals");
+			out.println("4 - See Statistics");
 			out.println("0 - SAVE AND EXIT");
 			out.println();
 			
@@ -136,7 +137,8 @@ public class The_Fat_Project {
 					}
 					break;
 				case "2": manageIngredientsFile(); break;
-				case "3": seeStatsMenu(); break;
+				case "3": manageMeals(); break;
+				case "4": seeStatsMenu(); break;
 				case "0":
 					
 					// saving meals
@@ -209,28 +211,7 @@ public class The_Fat_Project {
 				out.println("Is the Meal for today? (y/n)");
 				String option = rd.nextLine();
 				if (option.equals("n")) {
-
-					boolean correctDate = true;
-					do {
-						out.println();
-						out.print("day: ");
-						String day = rd.nextLine();
-						out.print("month: ");
-						String month = rd.nextLine();
-						out.print("year: ");
-						String year = rd.nextLine();
-						Date date;
-						try {
-							date = new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
-							meal.setDate(date);
-						}
-						catch (Exception e) {
-							out.println();
-							out.println("Invalid Date");
-							out.println();
-							correctDate = false;
-						}
-					} while (!correctDate);
+					meal.setDate(createNewDate());
 				}
 				else if (option.equals("y")) {
 					meal.setDate(new Date());
@@ -337,6 +318,9 @@ public class The_Fat_Project {
 			out.println("x - CANCEL");
 			
 			String option = rd.nextLine();
+			if (option.equals("x")) {
+				return null;
+			}
 			try {
 				
 				boolean correctWeight = true;
@@ -355,9 +339,6 @@ public class The_Fat_Project {
 				ingredient = new Ingredient(tables.getIngredientTable().get(Integer.parseInt(option)), weight);
 			}
 			catch (Exception e) {
-				if (option.equals("x")) {
-					return null;
-				}
 				correctOption = false;
 			}
 		} while (!correctOption);
@@ -650,7 +631,11 @@ public class The_Fat_Project {
 		out.println();
 		out.println("ADD FOOD TO FILE TOOL");
 		out.println();
+		out.println("What is the name of this meal/ingredient?");
+		String name = rd.nextLine();
 		meal = addMealMenu(meal, true);
+		meal.setName(name);
+		meal.setGroup("Prato Composto");
 		Ingredient ingredient = new Ingredient(meal);
 		if (meal != null) {
 			tables.getIngredientTable().put(ingredient.getID(), ingredient);
@@ -710,6 +695,83 @@ public class The_Fat_Project {
 		wr.write(ingredient.getMicroNutrients().getZinc() + "");
 		wr.write("\n");
 		wr.close();
+	}
+	
+	
+	public static void manageMeals() {
+		
+		String option = "";
+		do {
+			out.println();
+			out.println("MANAGE MEALS TOOL");
+			out.println();
+			out.println("1 - Delete Meal");
+			out.println("2 - Change Meal Date");
+			out.println("0 - RETURN");
+			out.println();
+			
+			option = rd.nextLine();
+			switch(option) {
+				case "1": deleteMeal(createNewDate()); option = "0"; break;
+				case "2": changeMealDate(createNewDate()); option = "0";  break;
+				case "0": option = "0";
+			}
+		} while (!option.equals("0"));	
+	}
+	
+	public static void deleteMeal(Date date) {
+		List<Meal> day = tables.getMeals().get(date);
+		String option = "";
+		boolean validOption = true;
+		do {
+			int i = 0;
+			for (; i < day.size(); i++) {
+				out.println("\nMEAL NUMBER: " + (i+1) + ": ");
+				out.println(day.get(i));
+			}
+			option = rd.nextLine();
+			int opt = Integer.parseInt(option)-1;
+			if (opt > 0 && opt < day.size()) {
+				day.remove(i-1);
+			}
+			else {
+				out.println("\nWrong option\n");
+				validOption = false;			
+			}
+		} while(!validOption);
+	}
+	
+	public static void changeMealDate(Date date) {
+		List<Meal> day = tables.getMeals().get(date);
+		Meal mealToChange = null;
+		String option = "";
+		boolean validOption = true;
+		do {
+			int i = 0;
+			for (; i < day.size(); i++) {
+				out.println("\nMEAL NUMBER " + (i+1) + ": ");
+				out.println(day.get(i));
+			}
+			option = rd.nextLine();
+			int opt = Integer.parseInt(option)-1;
+			if (opt > 0 && opt < day.size()) {
+				mealToChange = day.get(i-1);
+				tables.getMeals().get(date).remove(i-1);
+			}
+			else {
+				out.println("\nWrong option\n");
+				validOption = false;			
+			}
+		} while(!validOption);
+		
+		out.println("Change to date:");
+		Date newDate = createNewDate();
+		mealToChange.setDate(newDate);
+		if (!tables.getMeals().containsKey(newDate)) {
+			tables.getMeals().put(newDate, new ArrayList<>());
+		}
+		tables.getMeals().get(newDate).add(mealToChange);
+		
 	}
 	
 	
@@ -799,22 +861,26 @@ public class The_Fat_Project {
 			}
 		};
 		
+		Date first = null;
+		Date last = null;
 		try {
-			Date first = tables.getMeals().keySet().stream()
+			first = tables.getMeals().keySet().stream()
 									  			   .min(dateComp)
 									  			   .get();
 			
-			Date last = tables.getMeals().keySet().stream()
+			last = tables.getMeals().keySet().stream()
 		  			   							   .max(dateComp)
 		  			   							   .get();
-			printStats(first, last);
+			
 		} catch (Exception e) {
 			out.println("There are no meals saved yet!");
 		}
 		
+		printStats(first, last);
+		
 		out.println();
 	}
-	
+
 	public static void printLastDaysStats(int days) {
 		
 		Comparator<Date> dateComp = new Comparator<Date>() {
@@ -838,12 +904,13 @@ public class The_Fat_Project {
 		
 		Stats stats = new Stats(first, last);
 		Map<Date,List<Meal>> meals = tables.getMeals();
-		
+		List<Meal> mealList = new ArrayList<>();
 		for (Date date : meals.keySet()) {
 			if (date.compareTo(first) >= 0 && date.compareTo(last) <= 0) {
 				List<Meal> list = new ArrayList<>();
 				for (Meal meal : meals.get(date)) {
 					list.add(meal);
+					mealList.add(meal);
 				}
 				stats.addDay(date, list);
 			}
@@ -856,6 +923,7 @@ public class The_Fat_Project {
 			out.println();
 			out.println("1 - Simple Macro Nutrient Statistics");
 			out.println("2 - All Nutrient Statistics");
+			out.println("3 - See Meals");
 			out.println("0 - RETURN");
 			out.println();
 			
@@ -863,10 +931,36 @@ public class The_Fat_Project {
 			switch(option) {
 				case "1": stats.printSimpleStats(); break;
 				case "2": stats.printFullStats(); break;
+				case "3": 
+					for (Meal meal : mealList) {
+						out.println(meal);
+					}
 				case "0": option = "0"; break;
 			}
 		} while (!option.equals("0"));
 		out.println();
 	}
 
+	
+	public static Date createNewDate() {
+		Date date = new Date();
+		boolean correctDate = true;
+		do {
+			out.println();
+			out.print("day: ");
+			String day = rd.nextLine();
+			out.print("month: ");
+			String month = rd.nextLine();
+			out.print("year: ");
+			String year = rd.nextLine();
+			try {
+				return new Date(Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
+			}
+			catch (Exception e) {
+				out.println("\nInvalid Date\n");
+				correctDate = false;
+			}
+		} while (!correctDate);
+		return date; // never happens
+	}
 }

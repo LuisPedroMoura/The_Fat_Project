@@ -35,6 +35,7 @@ public class Ingredient extends Food{
 		super();
 		this.group = meal.getGroup();
 		this.name = meal.getName();
+		this.weight = meal.getWeight();
 		this.calories = meal.getCalories();
 		this.fats = new Fats(meal.getFats());
 		this.carbs = new Carbs(meal.getCarbs());

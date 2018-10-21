@@ -19,7 +19,6 @@ public class Food implements Serializable{
 	protected int ID;
 	
 	
-	
 	public Food() {
 		this.ID = globalID++;
 		this.fats = new Fats();
@@ -28,7 +27,6 @@ public class Food implements Serializable{
 		this.protein = new Protein();
 		this.microNutrients = new MicroNutrients();
 	}
-	
 	
 	
 	public String getName() {
@@ -138,6 +136,7 @@ public class Food implements Serializable{
 	
 	
 	public void printSimpleStats() {
+		out.println("Calories: " + this.calories);
 		out.println(fats.print());
 		out.println(carbs.print());
 		out.println(fiber.print());
@@ -145,6 +144,7 @@ public class Food implements Serializable{
 	}
 	
 	public void printFullStats() {
+		out.println("Calories: " + this.calories);
 		out.println(fats.stats());
 		out.println(carbs.stats());
 		out.println(fiber.stats());

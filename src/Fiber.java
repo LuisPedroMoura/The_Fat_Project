@@ -4,7 +4,7 @@ public class Fiber implements Serializable {
 	
 
 	private static final long serialVersionUID = 5572922172663348492L;
-	private double fiber;
+	private double fiber = 0.0;
 	
 	public Fiber() {}
 	

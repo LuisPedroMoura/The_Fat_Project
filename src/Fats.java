@@ -4,12 +4,12 @@ public class Fats implements Serializable{
 
 
 	private static final long serialVersionUID = -3604007428457752520L;
-	private double fats = 0;
-	private double saturated = 0;
-	private double monounsaturated = 0;
-	private double polyunsaturated = 0;
-	private double linoleic = 0;
-	private double trans = 0;
+	private double fats = 0.0;
+	private double saturated = 0.0;
+	private double monounsaturated = 0.0;
+	private double polyunsaturated = 0.0;
+	private double linoleic = 0.0;
+	private double trans = 0.0;
 	
 	public Fats() {}
 	
